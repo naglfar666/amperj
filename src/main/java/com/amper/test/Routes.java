@@ -31,8 +31,9 @@ public class Routes {
                 .get("/funcRoute2", testController::testFunction, generalMiddlewares)
                 .and()
                 .group("/api/test2")
-                .get("/funcRoute", testController::testFunction, generalMiddlewares)
-                .get("/funcRoute2", testController::testFunction, generalMiddlewares);
+                .post("/funcRoute", testController::testFunction, generalMiddlewares)
+                .put("/funcRoute2", testController::testFunction, generalMiddlewares)
+                .delete("/funcRoute3", testController::testFunction, generalMiddlewares);
     }
 
 }

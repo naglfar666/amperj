@@ -1,12 +1,12 @@
 package com.amperj.processors;
 
-import com.amperj.container.BeanContainer;
 import com.amperj.container.Container;
 import com.amperj.core.AmperApplication;
 import com.amperj.models.AmperRequest;
 import com.amperj.models.AmperResponse;
 import com.amperj.models.RouteModel;
 import com.amperj.router.Router;
+import com.amperj.settings.RequestMethod;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 public class JettyRequestProcessor extends AbstractHandler {
@@ -28,6 +27,7 @@ public class JettyRequestProcessor extends AbstractHandler {
     ) throws IOException, ServletException {
         System.out.println(">> TARGET " + target);
         System.out.println(">> METHOD " + httpServletRequest.getMethod());
+        System.out.println(">> METHOD GET EQUAL " + httpServletRequest.getMethod().toUpperCase().equals(RequestMethod.GET.name().toUpperCase()));
 
         // Получаем маршрут из маршрутизатора
         Router router = AmperApplication.getAmperContext().getRouter();

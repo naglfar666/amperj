@@ -1,13 +1,15 @@
 package com.amperj.models;
 
+import com.amperj.settings.RequestMethod;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Function;
 
 public class RouteModel {
 
-    // Метод запроса POST GET PUT DELETE
-    private String requestType;
+    // Метод запроса
+    private RequestMethod requestMethod;
 
     // ID класса, в котором лежит маршрут
     private String controllerBeanId;
@@ -27,12 +29,12 @@ public class RouteModel {
     // Признак того, что модель маршрута записана функционально
     private Boolean functional;
 
-    public String getRequestType() {
-        return requestType;
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
     }
 
-    public void setRequestType(String requestType) {
-        this.requestType = requestType;
+    public void setRequestMethod(RequestMethod requestMethod) {
+        this.requestMethod = requestMethod;
     }
 
     public String getControllerBeanId() {

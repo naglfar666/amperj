@@ -3,6 +3,7 @@ package com.amperj.router;
 import com.amperj.models.AmperRequest;
 import com.amperj.models.AmperResponse;
 import com.amperj.models.RouteModel;
+import com.amperj.settings.RequestMethod;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +28,69 @@ public class RouterImpl implements Router {
 
     @Override
     public Router get(String path, Function<AmperRequest, AmperResponse> function) {
-        register(fillFunctionRouteModel(path, function));
+        register(fillFunctionRouteModel(path, function, RequestMethod.GET));
         return this;
     }
 
     @Override
     public Router get(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
-        RouteModel routeModel = fillFunctionRouteModel(path, function);
+        RouteModel routeModel = fillFunctionRouteModel(path, function, RequestMethod.GET);
+        routeModel.setMiddlewares(middlewares);
+        register(routeModel);
+        return this;
+    }
+
+    @Override
+    public Router post(String path, Function<AmperRequest, AmperResponse> function) {
+        register(fillFunctionRouteModel(path, function, RequestMethod.POST));
+        return this;
+    }
+
+    @Override
+    public Router post(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
+        RouteModel routeModel = fillFunctionRouteModel(path, function, RequestMethod.POST);
+        routeModel.setMiddlewares(middlewares);
+        register(routeModel);
+        return this;
+    }
+
+    @Override
+    public Router put(String path, Function<AmperRequest, AmperResponse> function) {
+        register(fillFunctionRouteModel(path, function, RequestMethod.PUT));
+        return this;
+    }
+
+    @Override
+    public Router put(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
+        RouteModel routeModel = fillFunctionRouteModel(path, function, RequestMethod.PUT);
+        routeModel.setMiddlewares(middlewares);
+        register(routeModel);
+        return this;
+    }
+
+    @Override
+    public Router delete(String path, Function<AmperRequest, AmperResponse> function) {
+        register(fillFunctionRouteModel(path, function, RequestMethod.DELETE));
+        return this;
+    }
+
+    @Override
+    public Router delete(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
+        RouteModel routeModel = fillFunctionRouteModel(path, function, RequestMethod.DELETE);
+        routeModel.setMiddlewares(middlewares);
+        register(routeModel);
+        return this;
+    }
+
+    @Override
+    public Router options(String path, Function<AmperRequest, AmperResponse> function) {
+        register(fillFunctionRouteModel(path, function, RequestMethod.OPTIONS));
+        return this;
+    }
+
+    @Override
+    public Router options(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
+        RouteModel routeModel = fillFunctionRouteModel(path, function, RequestMethod.OPTIONS);
         routeModel.setMiddlewares(middlewares);
         register(routeModel);
         return this;
@@ -57,7 +114,7 @@ public class RouterImpl implements Router {
      * @param function
      * @return
      */
-    private RouteModel fillFunctionRouteModel(String path, Function<AmperRequest, AmperResponse> function) {
+    private RouteModel fillFunctionRouteModel(String path, Function<AmperRequest, AmperResponse> function, RequestMethod requestMethod) {
         // Если включен модификатор группировки, используем его
         if (groupPath != null) {
             path = groupPath + path;
@@ -68,6 +125,7 @@ public class RouterImpl implements Router {
         routeModel.setRequestPath(path);
         routeModel.setFunction(function);
         routeModel.setFunctional(true);
+        routeModel.setRequestMethod(requestMethod);
         return routeModel;
     }
 

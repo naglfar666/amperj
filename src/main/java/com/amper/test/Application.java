@@ -13,7 +13,6 @@ public class Application {
 
     public static void main(String[] args) {
         AmperContext amperContext = Amper.init(Application.class, args);
-        System.out.println(">> AUTOWIRED ROUTES " + routes);
         routes.register(amperContext);
         Amper.run();
     }
