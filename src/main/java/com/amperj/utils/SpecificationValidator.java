@@ -1,10 +1,6 @@
 package com.amperj.utils;
 
-import com.amperj.specifications.Component;
-import com.amperj.specifications.Controller;
-import com.amperj.specifications.Entity;
-import com.amperj.specifications.Routes;
-import com.amperj.specifications.AmperApplication;
+import com.amperj.specifications.*;
 
 public class SpecificationValidator {
 
@@ -13,6 +9,7 @@ public class SpecificationValidator {
                 appClass.isAnnotationPresent(Controller.class) ||
                 appClass.isAnnotationPresent(Routes.class) ||
                 appClass.isAnnotationPresent(AmperApplication.class) ||
+                appClass.isAnnotationPresent(Middleware.class) ||
                 appClass.isAnnotationPresent(Entity.class);
     }
 

@@ -4,6 +4,7 @@ import com.amperj.container.BeanContainer;
 import com.amperj.container.Container;
 import com.amperj.core.AmperApplication;
 import com.amperj.models.AmperRequest;
+import com.amperj.models.AmperResponse;
 import com.amperj.models.RouteModel;
 import com.amperj.router.Router;
 import org.eclipse.jetty.server.Request;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Function;
 
 public class JettyRequestProcessor extends AbstractHandler {
 
@@ -35,8 +37,22 @@ public class JettyRequestProcessor extends AbstractHandler {
 
         Container beanContainer = AmperApplication.getAmperContext().getBeanContainer();
 
+        // Если маршрут был зарегистрирован функционально с помощью объекта маршрутов, вызываем вначале их
         if (routeModel != null && routeModel.isFunctional()) {
+            // Инициализируем объект запроса
             AmperRequest amperRequest = new AmperRequest();
+
+            // Если к маршруту приложены промежуточные обработчики, вызываем их по очереди
+            if (routeModel.getMiddlewares() != null) {
+                for (Function<AmperRequest, AmperResponse> middleware : routeModel.getMiddlewares()) {
+                    AmperResponse amperResponse = middleware.apply(amperRequest);
+                    // Если промежуточный обработчик закончил запрос
+                    if (amperResponse != null && amperResponse.getHandled()) {
+                        System.out.println(">> REQUEST FINISHED BY MIDDLEWARE");
+                    }
+                }
+            }
+            // Вызываем функцию из контроллера
             routeModel.getFunction().apply(amperRequest);
 
         } else {
