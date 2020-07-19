@@ -1,9 +1,16 @@
 package com.amperj.registrar;
 
+import com.amperj.container.Container;
 import com.amperj.core.AmperApplication;
 import com.amperj.core.AmperContext;
 import com.amperj.models.AmperRunnerModel;
+import com.amperj.processors.AutowiredProcessor;
 import com.amperj.processors.RestControllerProcessor;
+import com.amperj.specifications.Component;
+import com.amperj.specifications.Controller;
+import com.amperj.specifications.Entity;
+import com.amperj.specifications.Routes;
+import com.amperj.utils.SpecificationValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +32,12 @@ public class BeanRegistrar implements Registrar {
         amperRunnerModel = AmperApplication.getAmperRunnerModel();
         // Получаем все классы приложения
         registerClasses();
+        // Инициализируем все подключенные бины
+        initBeans();
+        // Внедряем зависимости
+        registerAutowired();
         // Регистрируем контроллеры
-        registerControllers();
+//        registerControllers();
     }
 
     /**
@@ -97,6 +108,30 @@ public class BeanRegistrar implements Registrar {
             }
         }
         return classes;
+    }
+
+    /**
+     * Инициализирует все бины, которые найдены в проекте
+     */
+    private void initBeans() {
+        Container beanContainer = AmperApplication.getAmperContext().getBeanContainer();
+        for (Class<?> appClass : applicationClasses) {
+            if (SpecificationValidator.isComponent(appClass)) {
+                try {
+                    beanContainer.set(appClass.getName(), appClass.getConstructor().newInstance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Внедряет все зависимости с аннотацией @Autowired
+     */
+    private void registerAutowired() {
+        AutowiredProcessor autowiredProcessor = new AutowiredProcessor();
+        autowiredProcessor.process(AmperApplication.getAmperContext(), applicationClasses);
     }
 
     /**

@@ -9,22 +9,24 @@ public class BeanContainer implements Container {
 
     private final Map<String, Object> controllerBeans = new HashMap<>();
 
+    private final Map<String, Object> initializedBeans = new HashMap<>();
+
     @Override
     public Object get(String id) {
-        return beans.get(id);
+        return initializedBeans.get(id);
     }
 
     @Override
     public void set(String id, Object bean) throws Exception {
-        if (beans.get(id) != null) {
+        if (initializedBeans.get(id) != null) {
             throw new Exception("Bean with id already registered " + id);
         }
-        beans.put(id, bean);
+        initializedBeans.put(id, bean);
     }
 
     @Override
     public Boolean has(String id) {
-        return beans.containsKey(id);
+        return initializedBeans.containsKey(id);
     }
 
     @Override

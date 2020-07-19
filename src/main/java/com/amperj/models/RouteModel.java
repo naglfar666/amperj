@@ -1,6 +1,7 @@
 package com.amperj.models;
 
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public class RouteModel {
 
@@ -11,6 +12,10 @@ public class RouteModel {
     private Method method;
 
     private String requestPath;
+
+    private Function<AmperRequest, AmperResponse> function;
+
+    private Boolean functional;
 
     public String getRequestType() {
         return requestType;
@@ -42,5 +47,21 @@ public class RouteModel {
 
     public void setRequestPath(String requestPath) {
         this.requestPath = requestPath;
+    }
+
+    public Function<AmperRequest, AmperResponse> getFunction() {
+        return function;
+    }
+
+    public void setFunction(Function<AmperRequest, AmperResponse> function) {
+        this.function = function;
+    }
+
+    public Boolean isFunctional() {
+        return this.functional;
+    }
+
+    public void setFunctional(Boolean functional) {
+        this.functional = functional;
     }
 }

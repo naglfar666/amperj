@@ -10,16 +10,19 @@ public class AmperApplication {
 
     private static AmperRunnerModel amperRunnerModel;
 
-    public static AmperContext run(AmperRunnerModel model) {
+    public static AmperContext init(AmperRunnerModel model) {
         amperRunnerModel = model;
         // Регистрируем основные модули ядра
         new CoreBeanRegistrar().register(amperContext);
         // Регистрируем все подключенные бины
         amperContext.getBeanRegistrar().register(amperContext);
-        // Запускаем веб сервер
-        JettyServerProcessor.runServer();
         // Возвращаем контекст
         return amperContext;
+    }
+
+    public static void run() {
+        // Запускаем веб сервер
+        JettyServerProcessor.runServer();
     }
 
     public static AmperContext getAmperContext() {

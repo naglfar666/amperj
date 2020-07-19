@@ -3,6 +3,7 @@ package com.amperj.processors;
 import com.amperj.container.BeanContainer;
 import com.amperj.container.Container;
 import com.amperj.core.AmperApplication;
+import com.amperj.models.AmperRequest;
 import com.amperj.models.RouteModel;
 import com.amperj.router.Router;
 import org.eclipse.jetty.server.Request;
@@ -30,14 +31,26 @@ public class JettyRequestProcessor extends AbstractHandler {
         Router router = AmperApplication.getAmperContext().getRouter();
         RouteModel routeModel = router.findRoute(target, httpServletRequest.getMethod());
 
+        System.out.println(">> FOUND ROUTE MODEL " + routeModel);
+
         Container beanContainer = AmperApplication.getAmperContext().getBeanContainer();
 
-        // Вызываем метод, закрепленный за маршрутом
-        try {
-            String[] args = { "test" };
-            routeModel.getMethod().invoke( beanContainer.getController(routeModel.getControllerBeanId()), "test");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (routeModel != null && routeModel.isFunctional()) {
+            AmperRequest amperRequest = new AmperRequest();
+            routeModel.getFunction().apply(amperRequest);
+
+        } else {
+            // Вызываем метод, закрепленный за маршрутом
+            try {
+
+                if (routeModel != null) {
+                    String[] args = { "test" };
+                    routeModel.getMethod().invoke(beanContainer.getController(routeModel.getControllerBeanId()), "test");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         httpServletResponse.setContentType("text/html; charset=utf-8");
