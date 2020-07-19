@@ -13,6 +13,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.function.Function;
 
@@ -29,8 +30,18 @@ public class JettyRequestProcessor extends AbstractHandler {
         System.out.println(">> METHOD " + httpServletRequest.getMethod());
         System.out.println(">> METHOD GET EQUAL " + httpServletRequest.getMethod().toUpperCase().equals(RequestMethod.GET.name().toUpperCase()));
 
+        String body = null;
+        try {
+            body = getRequestBody(httpServletRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(">> REQUEST BODY " + body);
+
         // Получаем маршрут из маршрутизатора
         Router router = AmperApplication.getAmperContext().getRouter();
+
         RouteModel routeModel = router.findRoute(target, httpServletRequest.getMethod());
 
         System.out.println(">> FOUND ROUTE MODEL " + routeModel);
@@ -78,6 +89,25 @@ public class JettyRequestProcessor extends AbstractHandler {
             httpServletResponse.getWriter().println("<h1>Hello World</h1>");
         }
         request.setHandled(true);
+    }
+
+    /**
+     * Получение тела запроса
+     * @param httpServletRequest
+     * @return
+     * @throws Exception
+     */
+    private String getRequestBody(HttpServletRequest httpServletRequest) throws Exception {
+        StringBuilder requestBodyBuilder = new StringBuilder();
+
+        BufferedReader bodyReader = httpServletRequest.getReader();
+        String line = bodyReader.readLine();
+        while (line != null) {
+            requestBodyBuilder.append(line);
+            line = bodyReader.readLine();
+        }
+
+        return requestBodyBuilder.toString();
     }
 
 }

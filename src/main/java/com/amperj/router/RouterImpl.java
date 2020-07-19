@@ -18,12 +18,21 @@ public class RouterImpl implements Router {
 
     @Override
     public void register(RouteModel routeModel) {
-        routeModelMap.put(routeModel.getRequestPath(), routeModel);
+        String requestUri = routeModel.getRequestMethod().name().toUpperCase() + "|" + routeModel.getRequestPath();
+        // Если такой маршрут уже зарегистрирован, кидаем ошибку
+        if (findRoute(routeModel.getRequestPath(), routeModel.getRequestMethod().name()) != null) {
+            throw new RuntimeException("Route " + requestUri + " is already registered");
+        }
+        // Записываем ключ по формуле <Метод>_<Путь запроса>
+        routeModelMap.put(
+                requestUri,
+                routeModel
+        );
     }
 
     @Override
     public RouteModel findRoute(String requestUri, String method) {
-        return routeModelMap.get(requestUri);
+        return routeModelMap.get(method.toUpperCase() + "|" + requestUri);
     }
 
     @Override
