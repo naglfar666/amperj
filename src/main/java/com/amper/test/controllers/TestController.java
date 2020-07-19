@@ -1,14 +1,10 @@
 package com.amper.test.controllers;
 
-import com.amperj.core.Amper;
 import com.amperj.models.AmperRequest;
 import com.amperj.models.AmperResponse;
 import com.amperj.specifications.Controller;
 import com.amperj.specifications.Get;
 import com.amperj.specifications.Post;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Controller(path = "/api/test")
 public class TestController {

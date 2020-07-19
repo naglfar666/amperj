@@ -26,8 +26,13 @@ public class Routes {
         generalMiddlewares.add(corsMiddleware::handle);
 
         amperContext.getRouter()
-                .get("/api/test/funcRoute", testController::testFunction, generalMiddlewares)
-                .get("/api/test/funcRoute2", testController::testFunction, generalMiddlewares);
+                .group("/api/test")
+                .get("/funcRoute", testController::testFunction, generalMiddlewares)
+                .get("/funcRoute2", testController::testFunction, generalMiddlewares)
+                .and()
+                .group("/api/test2")
+                .get("/funcRoute", testController::testFunction, generalMiddlewares)
+                .get("/funcRoute2", testController::testFunction, generalMiddlewares);
     }
 
 }

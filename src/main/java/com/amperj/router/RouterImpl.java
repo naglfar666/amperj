@@ -4,7 +4,6 @@ import com.amperj.models.AmperRequest;
 import com.amperj.models.AmperResponse;
 import com.amperj.models.RouteModel;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,8 @@ import java.util.function.Function;
 public class RouterImpl implements Router {
 
     private final Map<String, RouteModel> routeModelMap = new HashMap<>();
+
+    private String groupPath;
 
     @Override
     public void register(RouteModel routeModel) {
@@ -26,17 +27,27 @@ public class RouterImpl implements Router {
 
     @Override
     public Router get(String path, Function<AmperRequest, AmperResponse> function) {
-        System.out.println(">> REGISTERING ROUTE " + path);
-        routeModelMap.put(path, fillFunctionRouteModel(path, function));
+        register(fillFunctionRouteModel(path, function));
         return this;
     }
 
     @Override
     public Router get(String path, Function<AmperRequest, AmperResponse> function, List<Function<AmperRequest, AmperResponse>> middlewares) {
-        System.out.println(">> REGISTERING ROUTE WITH MIDDLEWARES " + path);
         RouteModel routeModel = fillFunctionRouteModel(path, function);
         routeModel.setMiddlewares(middlewares);
-        routeModelMap.put(path, routeModel);
+        register(routeModel);
+        return this;
+    }
+
+    @Override
+    public Router group(String path) {
+        groupPath = path;
+        return this;
+    }
+
+    @Override
+    public Router and() {
+        groupPath = null;
         return this;
     }
 
@@ -47,6 +58,12 @@ public class RouterImpl implements Router {
      * @return
      */
     private RouteModel fillFunctionRouteModel(String path, Function<AmperRequest, AmperResponse> function) {
+        // Если включен модификатор группировки, используем его
+        if (groupPath != null) {
+            path = groupPath + path;
+        }
+        System.out.println(">> REGISTERING ROUTE " + path);
+        // Создаем модель маршрутизации
         RouteModel routeModel = new RouteModel();
         routeModel.setRequestPath(path);
         routeModel.setFunction(function);
